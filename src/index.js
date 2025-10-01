@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 // Prisma Client (generated to ./generated/prisma in schema)
-import { PrismaClient } from "./generated/prisma/index.js";
+import { PrismaClient } from "../generated/prisma/index.js";
 const prisma = new PrismaClient();
 
 app.get('/',(req , res)=>{
@@ -27,12 +27,13 @@ app.get('/applications', async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 })
+ 
 
+app.use(isAuthorized())
 
 app.post('/application' , async (req , res) => {
     try {
         const {
-            applicationId,
             name,
             rollNo,
             phoneNo,
@@ -51,7 +52,6 @@ app.post('/application' , async (req , res) => {
 
         const created = await prisma.application.create({
             data: {
-                applicationId,
                 name,
                 rollNo,
                 phoneNo,

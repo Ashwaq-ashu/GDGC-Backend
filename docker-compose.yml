@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: gdgc-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gdgc_db
+      POSTGRES_USER: gdgc_user
+      POSTGRES_PASSWORD: gdgc_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gdgc-network
+
+  # Node.js Backend Application
+  backend:
+    build: .
+    container_name: gdgc-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gdgc-network
+    command: sh -c "npx prisma migrate deploy && node index.js"
+
+volumes:
+  postgres_data:
+
+networks:
+  gdgc-network:
+    driver: bridge
