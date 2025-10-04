@@ -9,6 +9,8 @@ app.use(cors());
 
 // Prisma Client (generated to ./generated/prisma in schema)
 import { PrismaClient } from "../generated/prisma/index.js";
+import { adminRouter } from "./routes/admin.js";
+import { userRouter } from "./routes/user.js";
 const prisma = new PrismaClient();
 
 app.get('/',(req , res)=>{
@@ -29,54 +31,15 @@ app.get('/applications', async (req, res) => {
 })
  
 
-app.use(isAuthorized())
 
-app.post('/application' , async (req , res) => {
-    try {
-        const {
-            name,
-            rollNo,
-            phoneNo,
-            branch,
-            year,
-            resume,
-            linkedin,
-            email ,
-            github,
-            previousWork,
-            selectedPortfolios,
-            portfolio1,
-            portfolio2,
-            status
-        } = req.body;
+app.use("api/v1/admin",adminRouter)
+app.use("api/v1/user",userRouter)
 
-        const created = await prisma.application.create({
-            data: {
-                name,
-                rollNo,
-                phoneNo,
-                branch,
-                year,
-                resume,
-                linkedin,
-                email ,
-                github,
-                previousWork,
-                selectedPortfolios,
-                portfolio1,
-                portfolio2,
-                ...(status ? { status } : {})
-            }
-        });
+// app.use(isAuthorized())
 
-        res.status(201).json({ success: true, data: created });
-    } catch (error) {
-        res.status(400).json({ success: false, error: error.message });
-    }
-})
 
 // Start server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3009;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
