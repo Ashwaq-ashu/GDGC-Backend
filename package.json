@@ -21,9 +21,14 @@
   },
   "homepage": "https://github.com/GDSC-MJCET/GDGC-Backend#readme",
   "dependencies": {
-    "@prisma/client": "^6.15.0",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "prisma": "^6.15.0"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mongoose": "^5.11.96"
   }
 }
