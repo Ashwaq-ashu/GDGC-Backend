@@ -9,9 +9,7 @@ const generateToken = (userId) => {
 export const AuthController = {
     Register: async (req , res) => {
         try {
-            const name = req.body.name;
-            const email = req.body.email;
-            const password = req.body.password;
+            const {name , email , password} = req.body;
             const existingUser = await User.findOne({ email });
             if (existingUser) {
                 return res.status(400).json({
