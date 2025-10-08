@@ -1,3 +1,43 @@
-export const randomMiddleWare = () => {
-    console.log("this is a temporary random middleware")
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js'
+export const VerifyToken = () => {
+    async (req, res, next) => {
+        try {
+            let token;
+
+            // Get token from header
+            if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+                token = req.headers.authorization.split(' ')[1];
+            }
+
+            if (!token) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'No token provided, access denied'
+                });
+            }
+
+            // Verify token
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            
+            // Get admin from token
+            const admin = await User.findById(decoded.id).select('-password');
+            if (!admin) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Token is not valid'
+                });
+            }
+            req.admin = admin;
+            next();
+
+        } catch (error) {
+            res.status(401).json({
+                success: false,
+                message: 'Token is not valid',
+                error: error.message
+            });
+        }
+    }
+
 }
