@@ -3,12 +3,10 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
 // Load .env from root directory
 dotenv.config({ path: path.join(__dirname, '../.env') });
 import express from "express"
 import cors from "cors"
-
 import connectDB from "./mongodb/index.js";
 const app = express();
 
@@ -20,6 +18,7 @@ connectDB();
 
 
 import { adminRouter } from "./routes/admin.js";
+import { qrRouter } from './routes/qr.js'
 //import { userRouter } from "./routes/user.js";
 
 
@@ -38,7 +37,7 @@ app.get('/applications', async (req, res) => {
 
 
 app.use("/api/v1/admin",adminRouter)
-//app.use("/api/v1/user",userRouter)
+app.use("/api/v1/qr",qrRouter)
 
 // app.use(isAuthorized())
 
