@@ -3,7 +3,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
+import dyeRoutes from "./routes/dyeRoutes.js";
 // Load .env from root directory
 dotenv.config({ path: path.join(__dirname, '../.env') });
 import express from "express"
@@ -29,18 +29,9 @@ app.get('/',(req , res)=>{
     })
 })
 
-app.get('/applications', async (req, res) => {
-    res.json({
-        message:"simple route for now"
-    })
-})
- 
 
-
+app.use('/api/v1/dye-application', dyeRoutes)
 app.use("/api/v1/admin",adminRouter)
-//app.use("/api/v1/user",userRouter)
-
-// app.use(isAuthorized())
 
 
 // Start server
