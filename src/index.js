@@ -20,7 +20,7 @@ connectDB();
 
 
 import { adminRouter } from "./routes/admin.js";
-//import { userRouter } from "./routes/user.js";
+import { userRouter } from "./routes/user.js";
 
 
 app.get('/',(req , res)=>{
@@ -37,8 +37,6 @@ app.get('/applications', async (req, res) => {
  
 
 
-app.use("/api/v1/admin",adminRouter)
-//app.use("/api/v1/user",userRouter)
 
 // app.use(isAuthorized())
 
@@ -48,3 +46,6 @@ const PORT = process.env.PORT || 3009;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
+
+app.use("/api/v1/admin",adminRouter)
+app.use("/api/v1/user",userRouter)
