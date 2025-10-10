@@ -3,9 +3,11 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
+import dyeRoutes from "./routes/dyeRoutes.js";
 // Load .env from root directory
 dotenv.config({ path: path.join(__dirname, '../.env') });
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 import express from "express"
 import cors from "cors"
 
@@ -34,7 +36,8 @@ app.get('/applications', async (req, res) => {
         message:"simple route for now"
     })
 })
- 
+app.use('/dye-application', dyeRoutes)
+
 
 
 app.use("/api/v1/admin",adminRouter)

@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
 // (Optional) GET: Fetch all applications
 router.get("/", async (req, res) => {
   try {
-    const applications = await DyeApplication.find();
+    const applications = await Form.find();
     res.json(applications);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
