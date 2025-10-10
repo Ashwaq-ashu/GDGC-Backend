@@ -29,19 +29,9 @@ app.get('/',(req , res)=>{
     })
 })
 
-app.get('/applications', async (req, res) => {
-    res.json({
-        message:"simple route for now"
-    })
-})
-app.use('/dye-application', dyeRoutes)
 
-
-
+app.use('/api/v1/dye-application', dyeRoutes)
 app.use("/api/v1/admin",adminRouter)
-//app.use("/api/v1/user",userRouter)
-
-// app.use(isAuthorized())
 
 
 // Start server
