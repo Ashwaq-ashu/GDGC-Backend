@@ -6,8 +6,6 @@ const __dirname = path.dirname(__filename)
 import dyeRoutes from "./routes/dyeRoutes.js";
 // Load .env from root directory
 dotenv.config({ path: path.join(__dirname, '../.env') });
-console.log('MONGODB_URI:', process.env.MONGODB_URI);
-console.log('JWT_SECRET:', process.env.JWT_SECRET);
 import express from "express"
 import cors from "cors"
 
