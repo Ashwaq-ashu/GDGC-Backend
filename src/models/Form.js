@@ -38,13 +38,20 @@ const formSchema = new mongoose.Schema({
     type: String,
     default: "",
   }, 
-  
   hasMembership: {
     type: String,
     enum: ["yes", "no"],
     required: true,
   },
   membershipNumber: {
+    type: String,
+    default: "",
+  },
+  membershipCardUrl:  {
+    type: String,
+    default: "",
+  },
+  paymentScreenshotUrl : {
     type: String,
     default: "",
   },
