@@ -6,7 +6,19 @@ const qrSchema = new mongoose.Schema({
     required: true,
     trim: true ,
     unique : true 
+  }, 
+  qrcode : {
+    type : String ,
+    required : true  
   },
+  qrcodeurl : {
+    type : String ,
+    required : true , 
+  } ,
+  authority : {
+    type : String ,
+    enum : ["gb","execom","core"] ,
+  } ,
   destination: {
     type: String,
     required: true,
@@ -16,4 +28,4 @@ const qrSchema = new mongoose.Schema({
   timestamps: true
 });
 
-export default mongoose.model('QR', qrSchema);
+export default mongoose.model('Qr', qrSchema);
