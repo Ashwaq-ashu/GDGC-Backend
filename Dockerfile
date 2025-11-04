@@ -23,7 +23,7 @@ RUN npm install
 COPY . .
 
 # Generate Prisma client
-RUN npx prisma generate
+# RUN npx prisma generate
 
 # Production image, copy all the files and run the app
 FROM base AS runner
@@ -41,9 +41,9 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Copy only production dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy generated Prisma client and schema
-COPY --from=builder /app/generated ./generated
-COPY --from=builder /app/prisma ./prisma
+# # Copy generated Prisma client and schema
+# COPY --from=builder /app/generated ./generated
+# COPY --from=builder /app/prisma ./prisma
 
 # Copy application files
 COPY --chown=nodejs:nodejs package.json ./

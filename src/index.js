@@ -8,7 +8,6 @@ import dyeRoutes from "./routes/dyeRoutes.js";
 dotenv.config({ path: path.join(__dirname, '../.env') });
 import express from "express"
 import cors from "cors"
-
 import connectDB from "./mongodb/index.js";
 const app = express();
 
@@ -20,6 +19,7 @@ connectDB();
 
 
 import { adminRouter } from "./routes/admin.js";
+import { qrRouter } from './routes/qr.js'
 import { userRouter } from "./routes/user.js";
 
 
@@ -31,6 +31,9 @@ app.get('/',(req , res)=>{
 
 
 app.use('/api/v1/dye-application', dyeRoutes)
+app.use("/api/v1/admin",adminRouter)
+app.use("/api/v1/qr",qrRouter)
+app.use("/api/v1/user",userRouter)
 
 
 
@@ -40,5 +43,3 @@ app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
 
-app.use("/api/v1/admin",adminRouter)
-app.use("/api/v1/user",userRouter)
