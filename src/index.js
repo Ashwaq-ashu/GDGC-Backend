@@ -32,7 +32,7 @@ app.get('/',(req , res)=>{
 
 app.use('/api/v1/dye-application', dyeRoutes)
 app.use("/api/v1/admin",adminRouter)
-app.use("/api/v1/qr",qrRouter)
+app.use("/",qrRouter)
 app.use("/api/v1/user",userRouter)
 
 

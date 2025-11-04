@@ -1,4 +1,4 @@
-import Qr from "../models/qrmodel";
+import Qr from "../models/qrmodel.js";
 
 export const QrController = {
     redirect : async (req , res) => {
@@ -20,11 +20,14 @@ export const QrController = {
     updateRedirectionData : async (req , res) => {
         try {
            const {id , destination} = req.body ;
-            const QrModel = new Qr({
-                id  , 
-                destination 
+           // make sure the deswtination link it starts with https or http 
+            Qr.updateOne({
+                $where : {
+                    id : id , 
+                    destination : destination
+                }
             })
-            await QrModel.save();
+            // await QrModel.save();
             return res.status(200).json({
                 success : true ,
                 message : "the data has been updated in the db"

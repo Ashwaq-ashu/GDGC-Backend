@@ -4,6 +4,6 @@ import { QrController } from "../controllers/QrController.js"
 export const qrRouter = express.Router()
 
 // in this request the persons scan will be redirected to a particular website 
-qrRouter.route('/redirect/:id').get(QrController.redirect)
+qrRouter.route('/:id').get(QrController.redirect)
 qrRouter.route('/redirect').post(QrController.updateRedirectionData)
 qrRouter.route('/data').get(QrController.getDataOfQr)

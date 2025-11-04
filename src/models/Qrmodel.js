@@ -28,4 +28,6 @@ const qrSchema = new mongoose.Schema({
   timestamps: true
 });
 
-export default mongoose.model('Qr', qrSchema);
+const Qr = mongoose.model("Qr", qrSchema);
+
+export default Qr;
