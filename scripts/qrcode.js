@@ -15,6 +15,7 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 import QRCode from 'qrcode'
 import { createClient } from '@supabase/supabase-js';
 import Qr from '../src/models/qrmodel.js';
+import User from '../src/models/User.js';
 import connectDB from '../src/mongodb/index.js';
 
 // Supabase configuration
@@ -117,11 +118,13 @@ async function generateQRCodesForGB() {
       // Upload to Supabase storage
       const publicUrl = await uploadToSupabase(qrBuffer, fileName);
       console.log(`Uploaded: ${publicUrl}`);
-
+        
       // Insert record into database
       await insertRecord(i, `https://gdgcmjcet.in/initialSetup/${i}`, publicUrl , "gb" , url);
       console.log(`Record ${i} inserted successfully`);
-
+      
+    //   await createUser(username , password);
+      
       // Optional: Add a small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -131,6 +134,12 @@ async function generateQRCodesForGB() {
   }
   console.log('QR code generation completed!');
 }
+
+async function createUser(id , username , password) {
+    const username = id + "%sos%" + Math.floor(Math.random()*50)
+    const 
+}
+
 async function generateQRCodesForExecom() {
   console.log('Starting QR code generation...');
   

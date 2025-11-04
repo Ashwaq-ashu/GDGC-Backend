@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    required: false,
     unique: true,   
     lowercase: true
   },
@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 6
+  },
+  qr_id : {
+    type : String ,
+    require : true 
   }
 }, {
   timestamps: true
