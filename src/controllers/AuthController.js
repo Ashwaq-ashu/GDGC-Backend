@@ -110,4 +110,23 @@ export const AuthController = {
             });
         }
     },
+    CreateUserFromEmail : async (req , res) => {
+        try {
+                
+            const {email , id} = req.body()
+            // is the id valid ?? does an acc already exits with this id ?? 
+            // ==> qr model mein check if there exists an id => id is valid 
+            // ==> now check any user model if an user already exist with this id => already taken => error : go ahead 
+            // generate a new password 
+            // hash the new password and put in db 
+            // create a account for them by adding the hashed password , email , id in it 
+            // send the password and you are invited mail to the email use postmarker 
+            // u dont need to send a token 
+        } catch (error) {
+            res.status(500).json({
+                success : false ,
+                message : "Something went wrong" + error
+            })
+        }
+    }
 }
