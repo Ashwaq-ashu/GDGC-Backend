@@ -20,7 +20,7 @@ export const QrController = {
     updateRedirectionData : async (req , res) => {
         try {
            const {id , destination} = req.body ;
-           // make sure the deswtination link it starts with https or http 
+           // make sure the destination link it starts with https or http 
             Qr.updateOne({
                 $where : {
                     id : id , 

@@ -1,6 +1,11 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import Qr from '../models/qrmodel.js';
+import {nanoid } from 'nanoid';
+const postmark = require('postmark');
+const serverToken = process.env.POSTMARK_TOKEN;
+const client = new postmark.ServerClient(serverToken);
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
@@ -113,9 +118,44 @@ export const AuthController = {
     CreateUserFromEmail : async (req , res) => {
         try {
                 
-            const {email , id} = req.body()
+            const {name, email , id} = req.body();
+
             // is the id valid ?? does an acc already exits with this id ?? 
             // ==> qr model mein check if there exists an id => id is valid 
+            const existingId = await Qr.findOne({id});
+            if(existingId){
+                const existingUserEmail = await Qr.findOne({email});
+                if(!existingUserEmail){
+                    const password = nanoid();
+                    const salt = await bcrypt.genSalt(10);
+                    const hash = await bcrypt.hash(password, salt);
+                    client.sendEmail({
+                    "From": "160423747081@mjcollege.ac.in",
+                    "To": email,
+                    "Subject": "Password for GDGC account",
+                    "TextBody": `Hello from the Web Dev Team, \n Thank you for Signing up, Here is your password : ${password} \n Please don't share your password to keep your account safe. \n\n Best Wishes, \n Web Dev Team, GDGC MJCET`
+                    });
+                    const User = new User({
+                        name, 
+                        email,
+                        password : hash,
+                        qr_id: id
+                    })
+                    await User.save()
+                }
+                else {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Email Already Exists'
+                });
+            }
+            }
+            else{
+                return res.status(401).json({
+                    success:false,
+                    message: 'ID Doesnt Exists'
+                })
+            }
             // ==> now check any user model if an user already exist with this id => already taken => error : go ahead 
             // generate a new password 
             // hash the new password and put in db 
