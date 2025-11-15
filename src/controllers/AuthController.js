@@ -6,6 +6,12 @@ import {nanoid } from 'nanoid';
 import nodemailer from 'nodemailer';
 const SMTP_KEY = process.env.SMTP_KEY;
 const SMTP_USER = process.env.SMTP_USER;
+const generateToken = (userId) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  });
+};
+
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
   port: 587,
