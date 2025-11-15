@@ -137,7 +137,6 @@ async function generateQRCodesForGB() {
 
 async function createUser(id , username , password) {
     const username = id + "%sos%" + Math.floor(Math.random()*50)
-    const 
 }
 
 async function generateQRCodesForExecom() {

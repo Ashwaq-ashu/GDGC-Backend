@@ -3,14 +3,20 @@ import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import Qr from '../models/qrmodel.js';
 import {nanoid } from 'nanoid';
-const postmark = require('postmark');
-const serverToken = process.env.POSTMARK_TOKEN;
-const client = new postmark.ServerClient(serverToken);
-const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  });
-};
+import nodemailer from 'nodemailer';
+const SMTP_KEY = process.env.SMTP_KEY;
+const SMTP_USER = process.env.SMTP_USER;
+const transporter = nodemailer.createTransport({
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user:  `${SMTP_USER}`,
+    pass:  `${SMTP_KEY}`,
+  },
+});
+
+
 export const AuthController = {
     Register: async (req , res) => {
         try {
@@ -129,12 +135,22 @@ export const AuthController = {
                     const password = nanoid();
                     const salt = await bcrypt.genSalt(10);
                     const hash = await bcrypt.hash(password, salt);
-                    client.sendEmail({
-                    "From": "160423747081@mjcollege.ac.in",
-                    "To": email,
-                    "Subject": "Password for GDGC account",
-                    "TextBody": `Hello from the Web Dev Team, \n Thank you for Signing up, Here is your password : ${password} \n Please don't share your password to keep your account safe. \n\n Best Wishes, \n Web Dev Team, GDGC MJCET`
-                    });
+                    (async () => {
+                        try{
+                            const info = await transporter.sendMail({
+                            from: '"Web Dev Team" <160423747081>',
+                            to: email,
+                            subject: "Password for GDGC account",
+                            text: `Hello from the Web Dev Team, \n Thank you for Signing up, Here is your pass,word : ${password} \n Please don't sh are your password to keep your account safe. \n\n Best Wishes, \n Web Dev Team, GDGC MJCET`
+                        });
+
+                        console.log("Message sent:", info.messageId);
+                    }
+                        catch(e){
+                            console.log("Error sending email:", e)
+                        }
+                        })();
+                                            
                     const User = new User({
                         name, 
                         email,
