@@ -11,6 +11,7 @@ export const QrController = {
                 }
             })
             console.log("this is the data")
+            // foundedQrcode.destination => www.samilabs.me
             res.redirect(foundedQrCode.destination)
         } catch (error) {
             res.redirect("https://gdgcmjcet.in")

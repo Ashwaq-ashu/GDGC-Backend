@@ -112,7 +112,7 @@ export const AuthController = {
     },
     CreateUserFromEmail : async (req , res) => {
         try {
-                
+
             const {email , id} = req.body()
             // is the id valid ?? does an acc already exits with this id ?? 
             // ==> qr model mein check if there exists an id => id is valid 
