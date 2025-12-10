@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -30,8 +30,10 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1",
     "nanoid": "^5.1.6",
-    "nodemailer": "^7.0.10",
-    "qrcode": "^1.5.4"
+    "nodemailer": "^7.0.11",
+    "nodemon": "^3.1.11",
+    "qrcode": "^1.5.4",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",

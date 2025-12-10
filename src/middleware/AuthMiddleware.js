@@ -21,14 +21,14 @@ export const VerifyToken = () => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             
             // Get admin from token
-            const admin = await User.findById(decoded.id).select('-password');
-            if (!admin) {
+            const user = await User.findOne({_id:decoded.id})
+            if (!user) {
                 return res.status(401).json({
                     success: false,
                     message: 'Token is not valid'
                 });
             }
-            req.admin = admin;
+            req.id = user._id;
             next();
 
         } catch (error) {

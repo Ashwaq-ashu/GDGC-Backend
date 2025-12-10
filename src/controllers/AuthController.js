@@ -2,25 +2,17 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import Qr from '../models/qrmodel.js';
+import {success, z} from 'zod';
 import {nanoid } from 'nanoid';
 import nodemailer from 'nodemailer';
-const SMTP_KEY = process.env.SMTP_KEY;
-const SMTP_USER = process.env.SMTP_USER;
+
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
 };
 
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user:  `${SMTP_USER}`,
-    pass:  `${SMTP_KEY}`,
-  },
-});
+
 
 
 export const AuthController = {
@@ -128,42 +120,92 @@ export const AuthController = {
         }
     },
     CreateUserFromEmail : async (req , res) => {
+        // console.log("request log", req.body)
         try {
-                
-            const {name, email , id} = req.body();
-
+            const requiredBody = z.object({
+                name:z.string(),
+                email:z.email(),
+                id:z.string()
+            })
+            const parsedBody = requiredBody.safeParse(req.body);
+            const {name, email , id} = req.body;
+            if(!parsedBody.success){
+                res.status(404).json({
+                    message:parsedBody.error
+                })
+            }
             // is the id valid ?? does an acc already exits with this id ?? 
             // ==> qr model mein check if there exists an id => id is valid 
-            const existingId = await Qr.findOne({id});
+            let existingId;
+            try {
+                // console.log("passed")
+                // console.log(name, email, id)
+                existingId = await Qr.findOne({id:id});
+                // console.log(existingId)
+            } catch (error) {
+                res.status(404).json({
+                    error:error.message
+                })
+            }
+            // console.log(existingId)
             if(existingId){
-                const existingUserEmail = await Qr.findOne({email});
+                const existingUserEmail = await User.findOne({email});
                 if(!existingUserEmail){
                     const password = nanoid();
                     const salt = await bcrypt.genSalt(10);
                     const hash = await bcrypt.hash(password, salt);
+                    const SMTP_KEY = process.env.GMAIL_USER;
+                    const SMTP_USER = process.env.GMAIL_PASS;
+                    const transporter = nodemailer.createTransport({
+                    host:"smtp.gmail.com",
+                    port: 587,
+                    secure: false, // use false for STARTTLS; true for SSL on port 465
+                    auth: {
+                        user: process.env.GMAIL_USER,
+                        pass: process.env.GMAIL_PASS,
+                    }
+                    });
+
                     (async () => {
                         try{
                             const info = await transporter.sendMail({
-                            from: '"Web Dev Team" <160423747081>',
+                            from: GMAIL_USER,
                             to: email,
                             subject: "Password for GDGC account",
-                            text: `Hello from the Web Dev Team, \n Thank you for Signing up, Here is your pass,word : ${password} \n Please don't sh are your password to keep your account safe. \n\n Best Wishes, \n Web Dev Team, GDGC MJCET`
+                            text: `Hello from the Web Dev Team, \n Thank you for Signing up, Here is your password : ${password} \n Please don't sh are your password to keep your account safe. \n\n Best Wishes, \n Web Dev Team, GDGC MJCET`
                         });
 
-                        console.log("Message sent:", info.messageId);
+                     
                     }
                         catch(e){
-                            console.log("Error sending email:", e)
+                            res.status(404).json({error: e})
                         }
                         })();
-                                            
-                    const User = new User({
-                        name, 
-                        email,
-                        password : hash,
-                        qr_id: id
+                                      
+                    try {
+                        const user = await User.create({
+                            name, 
+                            email,
+                            password : hash,
+                            qr_id: id
+                        })
+                        
+                    } catch (error) {
+                        res.status(404).json({
+                            error:error.message
+                        })
+                    }
+                    
+                    // const ali = await aser.save();
+                    // console.log("user saved",ali)
+                    // const testingUrl = "http://localhost:5173/login"
+                    existingId.destination = "https://gdgcmjcet.in/login"
+
+                    await existingId.save();
+                    // console.log(existingId)
+                    res.json({
+                        success:true
                     })
-                    await User.save()
                 }
                 else {
                 return res.status(401).json({
@@ -188,6 +230,44 @@ export const AuthController = {
             res.status(500).json({
                 success : false ,
                 message : "Something went wrong" + error
+            })
+        }
+    },
+    LoginUser : async(req,res)=>{
+        const requiredBody = z.object({
+            email:z.email(),
+            password:z.string()
+        }
+        
+        )
+        const verifiedInputBody = requiredBody.parse(req.body);
+        if(!verifiedInputBody.success){
+            res.status(404).json({
+                message: verifiedInputBody.error
+            })
+        }
+        try {
+            const {email, password} = req.body;
+            const user = User.findOne({email:email});
+            if(!user){
+                res.status(404).json({
+                    message:"User not found"
+                })
+            }
+            if(await bcrypt.compare(password, user.password)){
+                const token = jwt.sign({id:user._id}, JWT_SECRET);
+                res.json({
+                    token:token
+                })
+            }
+            else{
+                res.status(404).json({
+                    message:"Password Incorrect"
+                })
+            }
+        } catch (error) {
+            res.status(404).json({
+                message:error.message
             })
         }
     }
