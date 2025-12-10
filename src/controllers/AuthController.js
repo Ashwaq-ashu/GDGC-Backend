@@ -115,7 +115,7 @@ export const AuthController = {
             res.status(500).json({
                 success: false,
                 message: 'Server error during login',
-                error: error.message
+                error1: error.message
             });
         }
     },
@@ -130,7 +130,7 @@ export const AuthController = {
             const parsedBody = requiredBody.safeParse(req.body);
             const {name, email , id} = req.body;
             if(!parsedBody.success){
-                res.status(404).json({
+                return res.status(404).json({
                     message:parsedBody.error
                 })
             }
@@ -143,8 +143,8 @@ export const AuthController = {
                 existingId = await Qr.findOne({id:id});
                 // console.log(existingId)
             } catch (error) {
-                res.status(404).json({
-                    error:error.message
+                return res.status(404).json({
+                    error2:error.message
                 })
             }
             // console.log(existingId)
@@ -154,8 +154,6 @@ export const AuthController = {
                     const password = nanoid();
                     const salt = await bcrypt.genSalt(10);
                     const hash = await bcrypt.hash(password, salt);
-                    const SMTP_KEY = process.env.GMAIL_USER;
-                    const SMTP_USER = process.env.GMAIL_PASS;
                     const transporter = nodemailer.createTransport({
                     host:"smtp.gmail.com",
                     port: 587,
@@ -166,21 +164,21 @@ export const AuthController = {
                     }
                     });
 
-                    (async () => {
-                        try{
-                            const info = await transporter.sendMail({
-                            from: GMAIL_USER,
+                    
+                        // try{
+                            await transporter.sendMail({
+                            from: process.env.GMAIL_USER,
                             to: email,
                             subject: "Password for GDGC account",
                             text: `Hello from the Web Dev Team, \n Thank you for Signing up, Here is your password : ${password} \n Please don't sh are your password to keep your account safe. \n\n Best Wishes, \n Web Dev Team, GDGC MJCET`
                         });
 
                      
-                    }
-                        catch(e){
-                            res.status(404).json({error: e})
-                        }
-                        })();
+                    // }
+                    //     catch(e){
+                    //         return res.status(404).json({error3: e})
+                    //     }
+                    //     ;
                                       
                     try {
                         const user = await User.create({
@@ -191,8 +189,8 @@ export const AuthController = {
                         })
                         
                     } catch (error) {
-                        res.status(404).json({
-                            error:error.message
+                        return res.status(404).json({
+                            error4:error.message
                         })
                     }
                     
@@ -203,7 +201,7 @@ export const AuthController = {
 
                     await existingId.save();
                     // console.log(existingId)
-                    res.json({
+                    return res.json({
                         success:true
                     })
                 }
@@ -227,7 +225,7 @@ export const AuthController = {
             // send the password and you are invited mail to the email use postmarker 
             // u dont need to send a token 
         } catch (error) {
-            res.status(500).json({
+            return res.status(500).json({
                 success : false ,
                 message : "Something went wrong" + error
             })
@@ -242,7 +240,7 @@ export const AuthController = {
         )
         const verifiedInputBody = requiredBody.parse(req.body);
         if(!verifiedInputBody.success){
-            res.status(404).json({
+           return  res.status(404).json({
                 message: verifiedInputBody.error
             })
         }
@@ -250,23 +248,23 @@ export const AuthController = {
             const {email, password} = req.body;
             const user = User.findOne({email:email});
             if(!user){
-                res.status(404).json({
+                return res.status(404).json({
                     message:"User not found"
                 })
             }
             if(await bcrypt.compare(password, user.password)){
                 const token = jwt.sign({id:user._id}, JWT_SECRET);
-                res.json({
+                return res.json({
                     token:token
                 })
             }
             else{
-                res.status(404).json({
+                return res.status(404).json({
                     message:"Password Incorrect"
                 })
             }
         } catch (error) {
-            res.status(404).json({
+            return res.status(404).json({
                 message:error.message
             })
         }
