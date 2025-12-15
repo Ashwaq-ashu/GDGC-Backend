@@ -170,7 +170,7 @@ export const AuthController = {
                             from: process.env.GMAIL_USER,
                             to: email,
                             subject: "Password for GDGC account",
-                            text: `Hello from the Web Dev Team, \n Thank you for Signing up, Here is your password : ${password} \n Please don't sh are your password to keep your account safe. \n\n Best Wishes, \n Web Dev Team, GDGC MJCET`
+                            html: `<h1>Hello from the Web Dev Team</h1>Thank you for Signing up, Here is your password : <b>${password}</b> <br>To keep your account safe, we encourage you on not sharing your password with anyone.  <br><br>Best Wishes, <br>Web Dev Team, GDGC MJCET`
                         });
 
                      
@@ -261,6 +261,62 @@ export const AuthController = {
             else{
                 return res.status(404).json({
                     message:"Password Incorrect"
+                })
+            }
+        } catch (error) {
+            return res.status(404).json({
+                message:error.message
+            })
+        }
+    },
+    ForgotPassword: async(req,res)=>{
+        const requiredBody = z.object({
+            email:z.email()
+        })
+        const body = requiredBody.safeParse(req.body);
+        if(!body.success){
+            return res.status(401).json({
+                message:"give an email"
+            })
+        }
+        const email = req.body.email;
+        try {
+            const user = await User.findOne({
+                email
+            })
+            if(user){
+                    const password = nanoid();
+                    const salt = await bcrypt.genSalt(10);
+                    const hash = await bcrypt.hash(password, salt);
+                    const transporter = nodemailer.createTransport({
+                    host:"smtp.gmail.com",
+                    port: 587,
+                    secure: false, // use false for STARTTLS; true for SSL on port 465
+                    auth: {
+                        user: process.env.GMAIL_USER,
+                        pass: process.env.GMAIL_PASS,
+                    }
+                    });
+
+                    
+                        // try{
+                            await transporter.sendMail({
+                            from: process.env.GMAIL_USER,
+                            to: email,
+                            subject: "Password for GDGC account",
+                            html: `<h1>Hello from the Web Dev Team</h1>Here is your new password : <b>${password}</b> <br>To keep your account safe, we encourage you on not sharing your password with anyone. <br><br>Best Wishes, <br>Web Dev Team, GDGC MJCET`
+                        });
+                    user.password = hash;
+                    console.log(user.password)
+                    await user.save()
+                    return res.status(200).json({
+                        success:true
+                    })
+
+            }
+            else{
+                return res.status(401).json({
+                    message:"email not found"
                 })
             }
         } catch (error) {
