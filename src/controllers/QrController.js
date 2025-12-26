@@ -1,4 +1,4 @@
-import Qr from "../models/qrmodel.js";
+import Qr from "../models/Qrmodel";
 
 export const QrController = {
     redirect : async (req , res) => {
