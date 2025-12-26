@@ -35,7 +35,7 @@ export const QrController = {
                     destination : destination
                 }
             })
-            //await QrModel.save();
+            //await Qrmodel.save();
             return res.status(200).json({
                 success : true ,
                 message : "the data has been updated in the db"
