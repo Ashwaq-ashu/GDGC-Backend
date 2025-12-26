@@ -5,11 +5,7 @@ export const VerifyToken = () => {
         try {
             let token;
 
-            // Get token from header
-            if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-                token = req.headers.authorization.split(' ')[1];
-            }
-
+            token = req.cookies.token;
             if (!token) {
                 return res.status(401).json({
                     success: false,
@@ -21,14 +17,14 @@ export const VerifyToken = () => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             
             // Get admin from token
-            const admin = await User.findById(decoded.id).select('-password');
-            if (!admin) {
+            const user = await User.findOne({_id:decoded.id})
+            if (!user) {
                 return res.status(401).json({
                     success: false,
                     message: 'Token is not valid'
                 });
             }
-            req.admin = admin;
+            req.id = user._id;
             next();
 
         } catch (error) {

@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 import dyeRoutes from "./routes/dyeRoutes.js";
+
 // Load .env from root directory
 dotenv.config({ path: path.join(__dirname, '../.env') });
 import express from "express"
@@ -21,7 +22,7 @@ connectDB();
 import { adminRouter } from "./routes/admin.js";
 import { qrRouter } from './routes/qr.js'
 import { userRouter } from "./routes/user.js";
-
+import { authRouter } from "./routes/auth.js";
 
 app.get('/',(req , res)=>{
     res.json({
@@ -34,7 +35,7 @@ app.use('/api/v1/dye-application', dyeRoutes)
 app.use("/api/v1/admin",adminRouter)
 app.use("/",qrRouter)
 app.use("/api/v1/user",userRouter)
-
+app.use("/api/v1/auth", authRouter)
 
 
 // Start server

@@ -21,14 +21,21 @@ export const QrController = {
     updateRedirectionData : async (req , res) => {
         try {
            const {id , destination} = req.body ;
-           // make sure the deswtination link it starts with https or http 
+           // make sure the destination link it starts with https or http 
+           if (!destination.startsWith('http://') && !destination.startsWith('https://')) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Destination URL must start with http:// or https://"
+                });
+            }
+            
             Qr.updateOne({
                 $where : {
                     id : id , 
                     destination : destination
                 }
             })
-            // await QrModel.save();
+            //await QrModel.save();
             return res.status(200).json({
                 success : true ,
                 message : "the data has been updated in the db"
