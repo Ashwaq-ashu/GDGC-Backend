@@ -135,10 +135,9 @@ async function generateQRCodesForGB() {
   console.log('QR code generation completed!');
 }
 
-async function createUser(id , username , password) {
-    const username = id + "%sos%" + Math.floor(Math.random()*50)
-    const 
-}
+// async function createUser(id , username , password) {
+//     const username = id + "%sos%" + Math.floor(Math.random()*50)
+// }
 
 async function generateQRCodesForExecom() {
   console.log('Starting QR code generation...');
@@ -174,6 +173,65 @@ async function generateQRCodesForExecom() {
   }
   console.log('QR code generation completed!');
 }
+async function generateQRCodesFornewCore_Execom() {
+  console.log('Starting QR code generation...');
+  
+  // Connect to MongoDB
+  await connectDB();
+  console.log('✅ Connected to MongoDB');
+
+  // for (let i = 41; i <= 70; i++) {
+  //   try {
+  //     const url = `https://api.gdgcmjcet.in/${i}`;
+  //     const fileName = `qr-code-${i}.png`;
+      
+  //     console.log(`Generating QR code ${i}/50 for ${url}`);
+
+  //     // Generate QR code
+  //     const qrBuffer = await generateQRCode(url);
+
+  //     // Upload to Supabase storage
+  //     const publicUrl = await uploadToSupabase(qrBuffer, fileName);
+  //     console.log(`Uploaded: ${publicUrl}`);
+
+  //     // Insert record into database
+  //     await insertRecord(i, `https://gdgcmjcet.in/initialSetup/${i}`, publicUrl , "execom" , url);
+  //     console.log(`Record ${i} inserted successfully`);
+
+  //     // Optional: Add a small delay to avoid rate limiting
+  //     await new Promise(resolve => setTimeout(resolve, 100));
+
+  //   } catch (err) {
+  //     console.error(`Failed to process QR code ${i}:`, err);
+  //   }
+  // }
+  for (let i = 151; i <= 160; i++) {
+    try {
+      const url = `https://api.gdgcmjcet.in/${i}`;
+      const fileName = `qr-code-${i}.png`;
+      
+      console.log(`Generating QR code ${i}/50 for ${url}`);
+
+      // Generate QR code
+      const qrBuffer = await generateQRCode(url);
+
+      // Upload to Supabase storage
+      const publicUrl = await uploadToSupabase(qrBuffer, fileName);
+      console.log(`Uploaded: ${publicUrl}`);
+
+      // Insert record into database
+      await insertRecord(i, `https://gdgcmjcet.in/initialSetup/${i}`, publicUrl , "core" , url);
+      console.log(`Record ${i} inserted successfully`);
+
+      // Optional: Add a small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+    } catch (err) {
+      console.error(`Failed to process QR code ${i}:`, err);
+    }
+  }
+  console.log('QR code generation completed!');
+}
 
 async function updateQRstuff() {
     const data = await Qr.updateMany({
@@ -182,9 +240,9 @@ async function updateQRstuff() {
 }
 
 // Run the script
-generateQRCodesForGB();
-generateQRCodesForExecom();
-
+// generateQRCodesForGB();
+// generateQRCodesForExecom();
+generateQRCodesFornewCore_Execom()
 /* 
 SETUP INSTRUCTIONS:
 

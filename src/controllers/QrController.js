@@ -1,4 +1,4 @@
-import Qr from "../models/qrmodel";
+import Qr from "../models/qrmodel.js";
 
 export const QrController = {
     redirect : async (req , res) => {
@@ -11,6 +11,7 @@ export const QrController = {
                 }
             })
             console.log("this is the data")
+            // foundedQrcode.destination => www.samilabs.me
             res.redirect(foundedQrCode.destination)
         } catch (error) {
             res.redirect("https://gdgcmjcet.in")
@@ -20,11 +21,21 @@ export const QrController = {
     updateRedirectionData : async (req , res) => {
         try {
            const {id , destination} = req.body ;
-            const QrModel = new Qr({
-                id  , 
-                destination 
+           // make sure the destination link it starts with https or http 
+           if (!destination.startsWith('http://') && !destination.startsWith('https://')) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Destination URL must start with http:// or https://"
+                });
+            }
+            
+            Qr.updateOne({
+                $where : {
+                    id : id , 
+                    destination : destination
+                }
             })
-            await QrModel.save();
+            //await QrModel.save();
             return res.status(200).json({
                 success : true ,
                 message : "the data has been updated in the db"
