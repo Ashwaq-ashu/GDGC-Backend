@@ -1,6 +1,6 @@
 import express from "express"
 import { AuthController } from "../controllers/AuthController.js"
-import { VerifyToken } from "../middleware/AuthMiddleware.js"
+// import { VerifyToken } from "../middleware/AuthMiddleware.js"
 export const adminRouter = express.Router()
 
 adminRouter.route('/signin').post(AuthController.LoginAdmin)
