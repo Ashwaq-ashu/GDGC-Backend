@@ -165,7 +165,7 @@ export const AuthController = {
                     });
 
                     
-                        // try{
+                        // try{kjakjakja
                             await transporter.sendMail({
                             from: "GDGC MJCET <gdgc.noreply@gmail.com>",
                             to: email,
