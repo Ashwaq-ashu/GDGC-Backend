@@ -32,11 +32,9 @@ export const BlogController = {
     }
 ,
     publishBlog:async(req,res)=>{
-        // return res.json({"message":"Publishing disabled for now"})
         const {blog:{title,des,banner,content}} = req.body; //state from frontend
-        let alisidfortesting = "694e19bc3e0f8c9d5961ac86"
         const toBePublished = new Blog({
-            title,des,banner,author:alisidfortesting,content
+            title,des,banner,author:req.id,content
         })
         try {
             await toBePublished.save()
@@ -48,7 +46,7 @@ export const BlogController = {
     deleteBlog: async(req,res)=>{
         const {_id} = req.body;
         const blog = await Blog.findById(_id)
-        if (blog.author == "694e19bc3e0f8c9d5961ac86" ) {
+        if (blog.author == req.id) {
             await Blog.findByIdAndDelete(_id)
             return res.json({"message":"Blog deleted successfully"})
         }else{
