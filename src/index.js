@@ -24,18 +24,20 @@ import { qrRouter } from './routes/qr.js'
 import { userRouter } from "./routes/user.js";
 import { authRouter } from "./routes/auth.js";
 
-app.get('/',(req , res)=>{
-    res.json({
-        message : "Hello world"
-    })
-})
+// app.get('/',(req , res)=>{
+//     res.json({
+//         message : "Hello world"
+//     })
+// })
 
 
 app.use('/api/v1/dye-application', dyeRoutes)
 app.use("/api/v1/admin",adminRouter)
-app.use("/",qrRouter)
 app.use("/api/v1/user",userRouter)
 app.use("/api/v1/auth", authRouter)
+
+// QR router should be LAST since it catches all remaining routes
+app.use("/",qrRouter)
 
 
 // Start server

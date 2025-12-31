@@ -1,14 +1,12 @@
-import Qr from "../models/qrmodel.js";
+import Qr from "../models/Qrmodel.js";
 
 export const QrController = {
     redirect : async (req , res) => {
         try {
+            
             const id = req.params.id ;
-            console.log("this is the particular id" , id)
-            const foundedQrCode = Qr.findOne({
-                $where : {
-                    id 
-                }
+            const foundedQrCode = await Qr.findOne({
+                id : id
             })
             console.log("this is the data")
             // foundedQrcode.destination => www.samilabs.me
@@ -35,7 +33,7 @@ export const QrController = {
                     destination : destination
                 }
             })
-            //await QrModel.save();
+            //await Qrmodel.save();
             return res.status(200).json({
                 success : true ,
                 message : "the data has been updated in the db"

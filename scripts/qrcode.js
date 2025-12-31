@@ -14,7 +14,7 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 
 import QRCode from 'qrcode'
 import { createClient } from '@supabase/supabase-js';
-import Qr from '../src/models/qrmodel.js';
+import Qr from '../src/models/Qrmodel.js';
 import User from '../src/models/User.js';
 import connectDB from '../src/mongodb/index.js';
 
