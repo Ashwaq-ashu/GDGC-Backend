@@ -232,28 +232,32 @@ export const AuthController = {
         }
     },
     LoginUser : async(req,res)=>{
-        const requiredBody = z.object({
+        
+        try {
+            const requiredBody = z.object({
             email:z.email(),
             password:z.string()
-        }
-        
-        )
-        const verifiedInputBody = requiredBody.parse(req.body);
-        if(!verifiedInputBody.success){
-           return  res.status(404).json({
-                message: verifiedInputBody.error
             })
-        }
-        try {
-            const {email, password} = req.body;
-            const user = User.findOne({email:email});
+
+            const verifiedInputBody = requiredBody.safeParse(req.body);
+            if(!verifiedInputBody.success){
+                console.log("zod error ")
+                return  res.status(404).json({
+                        message: verifiedInputBody.error
+                })
+            }
+            console.log(verifiedInputBody)
+            const {email, password} = verifiedInputBody.data;
+            console.log(email , password , "this is email and password")
+            const user = await User.findOne({email:email});
+            console.log(user)
             if(!user){
                 return res.status(404).json({
                     message:"User not found"
                 })
             }
             if(await bcrypt.compare(password, user.password)){
-                const token = jwt.sign({id:user._id}, JWT_SECRET);
+                const token = jwt.sign({id:user._id}, process.env.JWT_SECRET);
                 return res.json({
                     token:token
                 })
@@ -264,7 +268,8 @@ export const AuthController = {
                 })
             }
         } catch (error) {
-            return res.status(404).json({
+            console.log(error.message)
+            return res.status(500).json({
                 message:error.message
             })
         }
