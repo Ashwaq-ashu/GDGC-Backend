@@ -65,7 +65,7 @@ export const AuthController = {
     } ,
     LoginAdmin : async (req , res, next) => {
          try {
-            const { email, password } = req.body;   
+            const { email, password } = req.body;
 
             // Check if email and password are provided
             if (!email || !password) {
@@ -119,7 +119,6 @@ export const AuthController = {
             });
         }
     },
-    // remove the name parameter from here !!!
     CreateUserFromEmail : async (req , res) => {
         // console.log("request log", req.body)
         try {
@@ -156,19 +155,19 @@ export const AuthController = {
                     const salt = await bcrypt.genSalt(10);
                     const hash = await bcrypt.hash(password, salt);
                     const transporter = nodemailer.createTransport({
-                    host:"smtp.gmail.com",
+                    host:"smtp-relay.brevo.com",
                     port: 587,
                     secure: false, // use false for STARTTLS; true for SSL on port 465
                     auth: {
-                        user: process.env.GMAIL_USER,
-                        pass: process.env.GMAIL_PASS,
+                        user: process.env.BREVO_USER,
+                        pass: process.env.BREVO_PASS,
                     }
                     });
 
                     
-                        // try{
+                        // try{kjakjakja
                             await transporter.sendMail({
-                            from: process.env.GMAIL_USER,
+                            from: "GDGC MJCET <gdgc.noreply@gmail.com>",
                             to: email,
                             subject: "Password for GDGC account",
                             html: `<h1>Hello from the Web Dev Team</h1>Thank you for Signing up, Here is your password : <b>${password}</b> <br>To keep your account safe, we encourage you on not sharing your password with anyone.  <br><br>Best Wishes, <br>Web Dev Team, GDGC MJCET`
@@ -290,19 +289,19 @@ export const AuthController = {
                     const salt = await bcrypt.genSalt(10);
                     const hash = await bcrypt.hash(password, salt);
                     const transporter = nodemailer.createTransport({
-                    host:"smtp.gmail.com",
+                    host:"smtp-relay.brevo.com",
                     port: 587,
                     secure: false, // use false for STARTTLS; true for SSL on port 465
                     auth: {
-                        user: process.env.GMAIL_USER,
-                        pass: process.env.GMAIL_PASS,
+                        user: process.env.BREVO_USER,
+                        pass: process.env.BREVO_PASS,
                     }
                     });
 
                     
                         // try{
                             await transporter.sendMail({
-                            from: process.env.GMAIL_USER,
+                            from: "GDGC MJCET <gdgc.noreply@gmail.com>",
                             to: email,
                             subject: "Password for GDGC account",
                             html: `<h1>Hello from the Web Dev Team</h1>Here is your new password : <b>${password}</b> <br>To keep your account safe, we encourage you on not sharing your password with anyone. <br><br>Best Wishes, <br>Web Dev Team, GDGC MJCET`
