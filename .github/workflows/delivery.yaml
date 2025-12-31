@@ -28,16 +28,16 @@ jobs:
 
             echo "Pulling image $IMAGE ..."
             docker pull $IMAGE
-
+            
             echo "Stopping old container (ignore errors)..."
-            docker stop gdgc-backend || true
-            docker rm gdgc-backend || true
+            docker stop gdgc-backend 
+            docker rm gdgc-backend 
 
             echo "Starting container..."
             docker run -d \
               --name gdgc-backend \
               --network="host" \
-              --env-file backend.env \
+              --env-file /home/sami/backend.env \
               --restart unless-stopped \
               $IMAGE
 
