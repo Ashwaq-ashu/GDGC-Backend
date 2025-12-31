@@ -37,7 +37,7 @@ jobs:
             docker run -d \
               --name gdgc-backend \
               --network="host" \
-              -e --env-file backend.env \
+              --env-file backend.env \
               --restart unless-stopped \
               $IMAGE
 
