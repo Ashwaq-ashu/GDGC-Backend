@@ -18,7 +18,8 @@ export const QrController = {
     },
     updateRedirectionData : async (req , res) => {
         try {
-           const {id , destination} = req.body ;
+           const { destination} = req.body ;
+            
            // make sure the destination link it starts with https or http 
            if (!destination.startsWith('http://') && !destination.startsWith('https://')) {
                 return res.status(400).json({
@@ -27,11 +28,8 @@ export const QrController = {
                 });
             }
             
-            Qr.updateOne({
-                $where : {
-                    id : id , 
-                    destination : destination
-                }
+             Qr.updateOne({_id:req.id},{
+                destination
             })
             //await Qrmodel.save();
             return res.status(200).json({
@@ -49,11 +47,8 @@ export const QrController = {
     },
     getDataOfQr : async (req , res) => {
         try {
-            const data = await Qr.findOne({
-                $where : {
-                    id : req.body.id
-                }
-            })
+            const user_qr_id = await User.findOne({_id:req.id}).select("qr_id")
+            const data = await Qr.findOne({id:user_qr_id.qr_id})
             return res.status(200).json({
                 success : true ,
                 message : "data has been fetched succesfully" ,

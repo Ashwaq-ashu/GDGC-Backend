@@ -1,11 +1,12 @@
 import express from "express"
 import { QrController } from "../controllers/QrController.js"
+import { VerifyToken } from "../middleware/AuthMiddleware.js"
 // import { randomMiddleWare } from "../middleware/AuthMiddleware"
 export const qrRouter = express.Router()
 
-// More specific routes first
-qrRouter.route('/redirect').post(QrController.updateRedirectionData)
-qrRouter.route('/data').get(QrController.getDataOfQr)
 
-// Dynamic route last (this catches anything that doesn't match above)
+// in this request the persons scan will be redirected to a particular website 
 qrRouter.route('/:id').get(QrController.redirect)
+qrRouter.route('/redirect').post(VerifyToken,QrController.updateRedirectionData)
+qrRouter.route('/data').get(VerifyToken,QrController.getDataOfQr)
+
