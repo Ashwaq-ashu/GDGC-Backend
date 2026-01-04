@@ -27,11 +27,13 @@ export const QrController = {
                     message: "Destination URL must start with http:// or https://"
                 });
             }
-            
-             await Qr.updateOne({_id:req.id},{
+            const user =await User.findOne({_id:req.id}).select("qr_id")
+
+             await Qr.updateOne({_id:user.qr_id},{
                 destination
             })
-            //await Qrmodel.save();
+
+            // await Qrmodel.save();
             return res.status(200).json({
                 success : true ,
                 message : "the data has been updated in the db"
