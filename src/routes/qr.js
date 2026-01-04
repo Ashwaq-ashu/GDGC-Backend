@@ -6,7 +6,7 @@ export const qrRouter = express.Router()
 
 
 // in this request the persons scan will be redirected to a particular website 
-qrRouter.route('/:id').get(QrController.redirect)
 qrRouter.route('/redirect').post(VerifyToken,QrController.updateRedirectionData)
 qrRouter.route('/data').get(VerifyToken,QrController.getDataOfQr)
+qrRouter.route('/:id').get(QrController.redirect)
 
