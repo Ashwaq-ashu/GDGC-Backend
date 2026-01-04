@@ -28,8 +28,8 @@ export const QrController = {
                 });
             }
             const user =await User.findOne({_id:req.id}).select("qr_id")
-
-             await Qr.updateOne({_id:user.qr_id},{
+            // remember that this id is the qr id not the real _id (both of them are different terms , this id is associated with each qr code)
+            await Qr.updateOne({id:user.qr_id},{
                 destination
             })
 
@@ -39,6 +39,7 @@ export const QrController = {
                 message : "the data has been updated in the db"
             }) 
         } catch (error) {
+            console.log(error , "this is an error")
             return res.status(500).json({
                 success : false ,
                 message : "An error has occured while updating data" ,
