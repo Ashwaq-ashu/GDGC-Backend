@@ -1,5 +1,5 @@
 import Qr from "../models/Qrmodel.js";
-
+import User from "../models/User.js"
 export const QrController = {
     redirect : async (req , res) => {
         try {
@@ -58,7 +58,7 @@ export const QrController = {
             return res.status(500).json({
                 success : false ,
                 message : "An error has occured while fetching qr data" ,
-                error ,
+                error:error.message ,
             }) 
         }
     }
