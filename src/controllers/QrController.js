@@ -28,7 +28,7 @@ export const QrController = {
                 });
             }
             
-             Qr.updateOne({_id:req.id},{
+             await Qr.updateOne({_id:req.id},{
                 destination
             })
             //await Qrmodel.save();
