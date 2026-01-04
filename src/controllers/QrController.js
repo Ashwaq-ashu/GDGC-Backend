@@ -19,7 +19,8 @@ export const QrController = {
     },
     updateRedirectionData : async (req , res) => {
         try {
-           const {id , destination} = req.body ;
+           const { destination} = req.body ;
+            
            // make sure the destination link it starts with https or http 
            if (!destination.startsWith('http://') && !destination.startsWith('https://')) {
                 return res.status(400).json({
@@ -28,11 +29,8 @@ export const QrController = {
                 });
             }
             
-            Qr.updateOne({
-                $where : {
-                    id : id , 
-                    destination : destination
-                }
+             Qr.updateOne({_id:req.id},{
+                destination
             })
             //await QrModel.save();
             return res.status(200).json({
