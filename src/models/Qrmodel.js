@@ -21,8 +21,8 @@ const qrSchema = new mongoose.Schema({
   } ,
   destination: {
     type: String,
-    required: true,
-    lowercase: true
+    required: true
+    // removed lowercase: true to preserve URL case sensitivity
   }
 }, {    
   timestamps: true
