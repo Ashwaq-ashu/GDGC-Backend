@@ -326,6 +326,25 @@ export const AuthController = {
             })
         }
     },
+    aboutUser : async (req , res) => {
+        try {     
+            const id = req.id  
+            console.log("about the user this is " , id)
+            const data = await User.findOne({_id:id})
+            console.log(data , "thisis the user")
+            res.status(200).json({
+                success : true,
+                name : data.name , 
+                email : data.email
+            })
+        } catch (error) {
+            res.status(500).json({
+                success : false ,
+                error : error
+            })
+        }
+
+    },
     ChangePassword: async(req,res)=>{
         const requiredBody = z.object({
             password:z.string().min(6)
