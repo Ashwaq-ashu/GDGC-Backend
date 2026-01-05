@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import Qr from '../models/Qrmodel.js';
-import {success, z} from 'zod';
+import {email, success, z} from 'zod';
 import {nanoid } from 'nanoid';
 import nodemailer from 'nodemailer';
 
@@ -344,5 +344,39 @@ export const AuthController = {
             })
         }
 
+    },
+    ChangePassword: async(req,res)=>{
+        const requiredBody = z.object({
+            password:z.string().min(6)
+        })
+        try {
+            const body = requiredBody.safeParse(req.body);
+            if(!body.success){
+                req.status(401).json({
+                    success:false,
+                    message:"improper conditions",
+                    error:error.message
+                })
+            }
+            const password = req.body.password
+            const user = await User.findOne({_id:req.id}).select("password")
+            if(await bcrypt.compare(password, user.password)){
+                res.status(401).json({
+                    message:"It's the same password",
+                    success:false
+                })
+                return
+            }
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password,salt)
+            await User.updateOne({_id:req.id},{password:hashedPassword})
+            res.status(200).json({
+                success:true
+            })
+        } catch (error) {
+            res.status(500).json({
+                error:error.message
+            })
+        }
     }
 }

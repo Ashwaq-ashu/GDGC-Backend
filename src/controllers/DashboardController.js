@@ -7,5 +7,10 @@ export const dashboardController = {
             success:true,
             user:user
         })
+    },
+    landingPage : async(req,res)=>{
+        return res.json({
+            success:true
+        })
     }
 }
