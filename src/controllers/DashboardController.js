@@ -8,9 +8,4 @@ export const dashboardController = {
             user:user
         })
     },
-    landingPage : async(req,res)=>{
-        return res.json({
-            success:true
-        })
-    }
 }
