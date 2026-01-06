@@ -8,5 +8,7 @@ export const authRouter = express.Router()
 authRouter.route('/signup').post(AuthController.CreateUserFromEmail)
 authRouter.route('/signin').post(AuthController.LoginUser)
 authRouter.route('/forgot-password').post(AuthController.ForgotPassword)
-authRouter.route('/about').get(VerifyToken,AuthController.aboutUser)
+// authRouter.route('/about').get(VerifyToken,AuthController.aboutUser)
+// ^ this is redundant we are using get-dashboard to do the same 
 authRouter.route('/change-password').post(VerifyToken,AuthController.ChangePassword)
+authRouter.route('/simple-verify').get(VerifyToken,AuthController.SimpleVerify)

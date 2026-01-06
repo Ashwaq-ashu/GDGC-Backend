@@ -5,6 +5,7 @@ import Qr from '../models/Qrmodel.js';
 import {email, success, z} from 'zod';
 import {nanoid } from 'nanoid';
 import nodemailer from 'nodemailer';
+import { VerifyToken } from '../middleware/AuthMiddleware.js';
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -326,25 +327,26 @@ export const AuthController = {
             })
         }
     },
-    aboutUser : async (req , res) => {
-        try {     
-            const id = req.id  
-            console.log("about the user this is " , id)
-            const data = await User.findOne({_id:id})
-            console.log(data , "thisis the user")
-            res.status(200).json({
-                success : true,
-                name : data.name , 
-                email : data.email
-            })
-        } catch (error) {
-            res.status(500).json({
-                success : false ,
-                error : error
-            })
-        }
+    // This is redundant
+    // aboutUser : async (req , res) => {
+    //     try {     
+    //         const id = req.id  
+    //         console.log("about the user this is " , id)
+    //         const data = await User.findOne({_id:id})
+    //         console.log(data , "thisis the user")
+    //         res.status(200).json({
+    //             success : true,
+    //             name : data.name , 
+    //             email : data.email
+    //         })
+    //     } catch (error) {
+    //         res.status(500).json({
+    //             success : false ,
+    //             error : error
+    //         })
+    //     }
 
-    },
+    // },
     ChangePassword: async(req,res)=>{
         const requiredBody = z.object({
             password:z.string().min(6)
@@ -378,5 +380,10 @@ export const AuthController = {
                 error:error.message
             })
         }
+    },
+        SimpleVerify : async(req,res)=>{
+        return res.json({
+            success:true
+        })
     }
 }
