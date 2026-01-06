@@ -5,7 +5,6 @@ import Qr from '../models/Qrmodel.js';
 import {email, success, z} from 'zod';
 import {nanoid } from 'nanoid';
 import nodemailer from 'nodemailer';
-import { VerifyToken } from '../middleware/AuthMiddleware.js';
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
