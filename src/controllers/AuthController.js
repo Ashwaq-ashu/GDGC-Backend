@@ -139,7 +139,7 @@ export const AuthController = {
                 existingId = await Qr.findOne({id:id});
                 // console.log(existingId)
             } catch (error) {
-                return res.status(404).json({
+                return res.status(500).json({
                     error2:error.message
                 })
             }
@@ -185,7 +185,7 @@ export const AuthController = {
                         })
                         
                     } catch (error) {
-                        return res.status(404).json({
+                        return res.status(500).json({
                             error4:error.message
                         })
                     }
@@ -238,7 +238,7 @@ export const AuthController = {
             const verifiedInputBody = requiredBody.safeParse(req.body);
             if(!verifiedInputBody.success){
                 console.log("zod error ")
-                return  res.status(404).json({
+                return  res.status(405).json({
                         message: verifiedInputBody.error
                 })
             }
@@ -248,7 +248,7 @@ export const AuthController = {
             const user = await User.findOne({email:email});
             console.log(user)
             if(!user){
-                return res.status(404).json({
+                return res.status(401).json({
                     message:"User not found"
                 })
             }
@@ -259,7 +259,7 @@ export const AuthController = {
                 })
             }
             else{
-                return res.status(404).json({
+                return res.status(401).json({
                     message:"Password Incorrect"
                 })
             }
@@ -321,7 +321,7 @@ export const AuthController = {
                 })
             }
         } catch (error) {
-            return res.status(404).json({
+            return res.status(500).json({
                 message:error.message
             })
         }
