@@ -117,6 +117,7 @@ export const AuthController = {
     },
     CreateUserFromEmail : async (req , res) => {
         // console.log("request log", req.body)
+        
         try {
             const requiredBody = z.object({
                 name:z.string(),
@@ -132,12 +133,14 @@ export const AuthController = {
             }
             // is the id valid ?? does an acc already exits with this id ?? 
             // ==> qr model mein check if there exists an id => id is valid 
-            const {name, email , id} = req.body;
+            let {name, email , id} = req.body;
+            
             if (id%process.env.SECRET!=0){
                 return res.status(401).json({
                     message:"Unauthorized"
                 })
             }
+            
             id = id/process.env.SECRET
             let existingId;
             try {
