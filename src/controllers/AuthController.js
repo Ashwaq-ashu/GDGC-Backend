@@ -153,7 +153,8 @@ export const AuthController = {
             // console.log(existingId)
             if(existingId){
                 const existingUserEmail = await User.findOne({email});
-                if(!existingUserEmail){
+                const existingUserQrId = await User.findOne({qr_id:id})
+                if(!existingUserEmail && !existingUserQrId){
                     const password = nanoid();
                     const salt = await bcrypt.genSalt(10);
                     const hash = await bcrypt.hash(password, salt);
