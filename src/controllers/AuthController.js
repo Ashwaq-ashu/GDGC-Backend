@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import Qr from '../models/Qrmodel.js';
-import {email, success, z} from 'zod';
+import {z} from 'zod';
 import {nanoid } from 'nanoid';
 import nodemailer from 'nodemailer';
 
