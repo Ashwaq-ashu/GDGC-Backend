@@ -28,9 +28,8 @@ export const VerifyToken = async (req, res, next) => {
             next();
 
         } catch (error) {
-            res.status(401).json({
+            res.status(500).json({
                 success: false,
-                message: 'Token is not valid',
                 error: error.message
             });
         }
