@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { type } from 'os';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -8,7 +9,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: false,
+    required: true,
     unique: true,   
     lowercase: true
   },
@@ -19,7 +20,15 @@ const userSchema = new mongoose.Schema({
   },
   qr_id : {
     type : String ,
-    require : true 
+    required : true 
+  },
+  admin:{
+    type:Boolean,
+    default:false
+  },
+  superadmin:{
+    type:Boolean,
+    default:false
   }
 }, {
   timestamps: true
