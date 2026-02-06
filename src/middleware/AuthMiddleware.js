@@ -12,7 +12,7 @@ export const VerifyToken = async (req, res, next) => {
                     message: 'No token provided, access denied'
                 });
             }
-
+            
             // Verify token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             

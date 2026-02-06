@@ -1,6 +1,9 @@
-import Blog from "../models/Blog";
+import Blog from "../models/Blog.js";
+import User from "../models/User.js";
 
-export default AdminController={
+// an admin cannot create a new admin 
+
+const AdminController={
     submitBlog: async(req,res)=>{
         const {title,des,banner,tags,content}= req.body;
         const Admin = req.admin;
@@ -14,5 +17,109 @@ export default AdminController={
         return res.json({success:false,error:error.message})
        }
         
+    },
+    checkIfUserExists: async(req,res)=>{
+        try {
+            const {id}= req.body;
+            const user = await User.findById(id)
+            if(!user){
+                return res.json({success:false,message:"User not found",user:null})
+            }
+            return res.json({success:true,user:user})
+        } catch (error) {
+            return res.json({success:false,error:error.message,user:null})
+        }
+    },
+    createAdmin: async(req,res)=>{
+        try {
+            const {id}= req.body;
+            const user = await User.findById(id)
+            if(!user){
+                return res.json({success:false,message:"User not found",adminCreated:false})
+            }
+            const admin = await User.findByIdAndUpdate(id,{admin:true},{new:true})
+            return res.json({success:true,adminCreated:true,user:admin.acknowledged})
+        } catch (error) {
+            return res.json({success:false,error:error.message,adminCreated:false})
+        }   
+    },
+    createSuperAdmin: async(req,res)=>{
+        try {
+            const {id}= req.body;
+            const user = await User.findById(id)
+            if(!user){
+                return res.json({success:false,message:"User not found",superAdminCreated:false})
+            }
+            if(!user.admin){
+                return res.json({success:false,message:"User must be an admin before becoming a superadmin",superAdminCreated:false})
+            }
+            const admin = await User.findByIdAndUpdate(id,{superadmin:true},{new:true})
+            return res.json({success:true,superAdminCreated:true,user:admin})
+        } catch (error) {
+            return res.json({success:false,error:error.message,superAdminCreated:false})
+        }
+    },
+    
+    removeAdmin: async(req,res)=>{
+        try {
+            const {id}= req.body;
+            if(id === req.id){
+                return res.json({success:false,message:"You cannot remove yourself from the superadmin list",superAdminRemoved:false})
+            }
+            const user = await User.findById(id)
+            if(!user){
+                return res.json({success:false,message:"User not found",adminRemoved:false})
+            }
+            const admin = await User.findByIdAndUpdate(id,{admin:false},{new:true})
+            return res.json({success:true,adminRemoved:true,user:admin.acknowledged})
+        } catch (error) {
+            return res.json({success:false,error:error.message,adminRemoved:false})
+        }
+    },
+    removeSuperAdmin: async(req,res)=>{
+        try {
+            // should i be able remove myself from the superadmin list ?
+            // should the superadmin be able to remove other superadmins ?? 
+            const {id} = req.body;
+            if(id === req.id){
+                return res.json({success:false,message:"You cannot remove yourself from the superadmin list",superAdminRemoved:false})
+            }
+            const user = await User.findById(id)
+            if(!user){
+                return res.json({success:false,message:"User not found",superAdminRemoved:false})
+            }
+            const superAdmin = await User.findByIdAndUpdate(id,{admin:false,superadmin:false},{new:true})
+            return res.json({success:true,superAdminRemoved:true,user:superAdmin.acknowledgedßß})
+        } catch (error) {
+            return res.json({success:false,error:error.message,superAdminRemoved:false})
+        }
+    },
+
+    getAllUsers: async(req,res)=>{
+        try {
+            const users = await User.find().select("-password")
+            return res.json({success:true,users:users})
+        } catch (error) {
+            return res.json({success:false,error:error.message,users:null})
+        }
+    },
+
+    getAllAdmins: async(req,res)=>{
+        try {
+            const admins = await User.find({admin:true}).select("-password")
+            return res.json({success:true,admins:admins})
+        } catch (error) {
+            return res.json({success:false,error:error.message,admins:null})
+        }
+    },
+    getAllSuperAdmins: async(req,res)=>{
+        try {
+            const superAdmins = await User.find({superadmin:true}).select("-password")
+            return res.json({success:true,superAdmins:superAdmins})
+        } catch (error) {
+            return res.json({success:false,error:error.message,superAdmins:null})
+        }
     }
 }
+
+export default AdminController;
