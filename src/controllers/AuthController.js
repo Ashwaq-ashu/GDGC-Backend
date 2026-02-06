@@ -253,11 +253,11 @@ export const AuthController = {
                         message: verifiedInputBody.error
                 })
             }
-            console.log(verifiedInputBody)
+            // console.log(verifiedInputBody)
             const {email, password} = verifiedInputBody.data;
-            console.log(email , password , "this is email and password")
+            // console.log(email , password , "this is email and password")
             const user = await User.findOne({email:email});
-            console.log(user)
+            // console.log(user)
             if(!user){
                 return res.status(401).json({
                     message:"User not found"
@@ -319,7 +319,7 @@ export const AuthController = {
                             html: `<h1>Hello from the Web Dev Team</h1>Here is your new password : <b>${password}</b> <br>To keep your account safe, we encourage you on not sharing your password with anyone. <br><br>Best Wishes, <br>Web Dev Team, GDGC MJCET`
                         });
                     user.password = hash;
-                    console.log(user.password)
+                    // console.log(user.password)
                     await user.save()
                     return res.status(200).json({
                         success:true
