@@ -90,6 +90,21 @@ increment: async (req, res) => {
       error: error.message,
     });
   }
-}
+},
+getScore : async (req,res) => {
+  //find debate using left and right team, then return the whole debate object 
+  const {leftTeam,rightTeam}   = req.body;
+  let debate;
+ try {
+    debate = await Debate.findOne({leftTeam,rightTeam})
+   if (!debate) {
+     return res.status(400).json({"error":"error finding the debate with"+leftTeam + " and " +  rightTeam})
+   }
+ } catch (error) {
+  return res.status(400).json({"error":error.message})
+ }
+ return res.status(200).json({"success":"true",debate})
+},
+
 
 };
