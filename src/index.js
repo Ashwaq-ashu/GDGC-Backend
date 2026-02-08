@@ -18,7 +18,7 @@ app.use(cors());
 
 connectDB();
 
-
+import { techDebateRouter } from './routes/techDebate.js'
 import { qrRouter } from './routes/qr.js'
 import { userRouter } from "./routes/user.js";
 import { authRouter } from "./routes/auth.js";
@@ -38,6 +38,7 @@ app.use("/api/v1/user",userRouter)
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/dashboard",dashboardRouter)
 app.use("/api/v1/debate",debateRouter)
+app.use('/api/v1/techdebate',techDebateRouter)
 
 // QR router should be LAST since it catches all remaining routes
 app.use("/",qrRouter)
