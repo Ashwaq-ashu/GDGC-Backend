@@ -34,6 +34,8 @@ const debateSchema = new mongoose.Schema({
       type:String,
       enum:["League","SemiFinal","Final"],
       default:"League"
-   }
+   },
+   votesLeft:{type:Number,default:0},
+   votesRight:{type:Number,default:0},
 },{timestamps:true});
 export default mongoose.model('Debate', debateSchema);
