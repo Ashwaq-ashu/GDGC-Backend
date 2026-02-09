@@ -43,16 +43,27 @@ export const TechDebateController = {
     startRound: async (req, res) => {
         try {
             const { leftTeam, rightTeam, Topic } = req.body;
-            if (!leftTeam || !rightTeam || !Topic) {
+            if (!leftTeam || !rightTeam || !Topic || leftTeam === rightTeam) {
                 return res.status(400).json({ "error": "Please Type All Fields" });
             }
             try {
-                const leftteam = await Club.findOne({Name:leftTeam})
-                const rightteam= await Club.findOne({Name:rightTeam})
-                const debate = await new Debate(leftteam.Name, rightteam.Name, Topic).save();
+                const leftteam = await Club.findOne({clubName:leftTeam})
+                const rightteam= await Club.findOne({clubName:rightTeam})
+                const alreadyExists = await Debate.findOne({
+                    leftTeam: { $in: [leftteam._id, rightteam._id] },
+                    rightTeam: { $in: [leftteam._id, rightteam._id] }
+            });
+                if(alreadyExists){
+                    return res.status(400).json({"error":"A debate between these two teams already exists"})
+                }
+                const debate = await new Debate({
+                    leftTeam:leftteam._id,
+                    rightTeam:rightteam._id,
+                    Topic
+                }).save();
                 return res.status(201).json({ "Success": true, debate });
             } catch (error) {
-                return res.status(404).json({ "error": "Club not found" });
+                return res.status(404).json({ "error": error.message });
             }
 
         } catch (err) {
@@ -130,17 +141,38 @@ increment: async (req, res) => {
 },
 getScore : async (req,res) => {
   //find debate using left and right team, then return the whole debate object 
-  const {leftTeam,rightTeam}   = req.body;
   let debate;
+  let leftTeamClub;
+  let rightTeamClub;
  try {
-    debate = await Debate.findOne({leftTeam,rightTeam})
+    debate = await Debate.findOne({isLive:true})
+    if(!debate){
+        return res.status(404).json({"error":"No live debate found"})
+    }
+    leftTeamClub = await Club.findOne({_id:debate.leftTeam})
+    rightTeamClub = await Club.findOne({_id:debate.rightTeam})
    if (!debate) {
-     return res.status(400).json({"error":"error finding the debate with"+leftTeam + " and " +  rightTeam})
+     return res.status(400).json({"error":"error finding the debate"})
    }
  } catch (error) {
   return res.status(400).json({"error":error.message})
  }
- return res.status(200).json({"success":"true",debate})
+
+
+ const sendingData = {
+    Topic : debate.Topic,
+    isLive : debate.isLive,
+    status : debate.status,
+    leftTeam:leftTeamClub.clubName,
+    rightTeam:rightTeamClub.clubName,
+    speakersLeft:leftTeamClub.teamMembers,
+    speakersRight:rightTeamClub.teamMembers,
+    leftLogo:leftTeamClub.clubImageUrl,
+    rightLogo:rightTeamClub.clubImageUrl,
+    date:debate.createdAt,
+
+ }
+ return res.status(200).json({"success":"true",sendingData})
 },
 getClubs: async (req,res) => {
     try {
@@ -149,5 +181,37 @@ getClubs: async (req,res) => {
     } catch (error) {
         return res.status(500).json({"error":error.message})
     }
-}
+},
+// createDebatesfortesting: async (req,res) => {
+//     //i wanna create atlesast 5 debates, so i will create ten clubs in this controller and also five debates between them, this is just for testing purposes, i will not use this controller in production
+//     try {
+//         const clubNames = ["Club A", "Club B", "Club C", "Club D", "Club E", "Club F", "Club G", "Club H", "Club I", "Club J"];
+//         const clubs = [];   
+//         for (let i = 0; i < clubNames.length; i++) {
+//             const club = await Club.create({
+//                 clubName: clubNames[i],
+//                 teamMembers: [
+//                     { name: `Member 1 of ${clubNames[i]}`, rollNo: `00${i}1`, isLeader: true },
+//                     { name: `Member 2 of ${clubNames[i]}`, rollNo: `00${i}2`, isLeader: false },
+//                     { name: `Member 3 of ${clubNames[i]}`, rollNo: `00${i}3`, isLeader: false },    
+//                 ],
+//                 clubImageUrl: `https://example.com/${clubNames[i].toLowerCase().replace(/ /g, "")}.png`
+//             });
+//             clubs.push(club);
+//         }
+//         const debatesData = [
+//             { leftTeam: clubs[0]._id, rightTeam: clubs[1]._id, Topic: "Topic 1" },
+//             { leftTeam: clubs[2]._id, rightTeam: clubs[3]._id, Topic: "Topic 2" },
+//             { leftTeam: clubs[4]._id, rightTeam: clubs[5]._id, Topic: "Topic 3" },
+//             { leftTeam: clubs[6]._id, rightTeam: clubs[7]._id, Topic: "Topic 4" },
+//             { leftTeam: clubs[8]._id, rightTeam: clubs[9]._id, Topic: "Topic 5" },
+//         ];
+//         for (let i = 0; i < debatesData.length; i++) {
+//             await Debate.create(debatesData[i]);
+//         }
+//         return res.status(200).json({"success":true})
+//     } catch (error) {
+//         return res.status(500).json({"error":error.message})
+//     }   
+// }
 }

@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 import Club from "./Club.js";
 const debateSchema = new mongoose.Schema({
-   title:{
+   Topic:{
     type:String,
     required:true,
    },
@@ -21,7 +21,7 @@ const debateSchema = new mongoose.Schema({
     type:Number,
     default:0
    },
-   isDead:{
+   isLive:{
     type:Boolean,
     default:false
    },
@@ -29,6 +29,11 @@ const debateSchema = new mongoose.Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref:Club,
     required:false
+   },
+   status:{
+      type:String,
+      enum:["League","SemiFinal","Final"],
+      default:"League"
    }
 },{timestamps:true});
 export default mongoose.model('Debate', debateSchema);
