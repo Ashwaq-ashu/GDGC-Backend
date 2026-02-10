@@ -182,19 +182,22 @@ export const TechDebateController = {
         }
 
 
-        const sendingData = {
-            Topic : debate.Topic,
-            isLive : debate.isLive,
-            status : debate.status,
-            leftTeam:leftTeamClub.clubName,
-            rightTeam:rightTeamClub.clubName,
-            speakersLeft:leftTeamClub.teamMembers,
-            speakersRight:rightTeamClub.teamMembers,
-            leftLogo:leftTeamClub.clubImageUrl,
-            rightLogo:rightTeamClub.clubImageUrl,
-            date:debate.createdAt,
-            leftScore:debate.leftScore,
-            rightScore:debate.rightScore,
+   const sendingData = {
+      Topic : debate.Topic,
+      isLive : debate.isLive,
+      status : debate.status,
+      leftTeam:leftTeamClub.clubName,
+      rightTeam:rightTeamClub.clubName,
+      speakersLeft:leftTeamClub.teamMembers,
+      speakersRight:rightTeamClub.teamMembers,
+      leftLogo:leftTeamClub.clubImageUrl,
+      rightLogo:rightTeamClub.clubImageUrl,
+      date:debate.createdAt,
+      leftScore:debate.leftScore,
+      rightScore:debate.rightScore,
+      votesLeft:debate.votesLeft,
+      votesRight:debate.votesRight
+
 
         }
         return res.status(200).json({"success":"true",sendingData})
@@ -255,27 +258,66 @@ export const TechDebateController = {
         } catch (error) {
             return res.status(500).json({"error":error.message})
         }
-    },
-    vote: async (req,res) => {
-        try{
-            const {leftTeam,rightTeam,side} = req.body;
-            if(!leftTeam || !rightTeam || !side){
-                return res.status(400).json({"error":"Missing required fields"})
-            }
-            const field = side === "left" ? "votesLeft" : "votesRight";
-            let debate=await Debate.findOneAndUpdate(
-                {leftTeam,rightTeam,isLive:true
-                },
-                {$inc:{[field]:1}},
-                {new:true}
-            )
-            if(!debate){
-                return res.status(400).json({"error":"Debate not found"})
-            }
-            return res.status(200).json({"success":true,"debate":debate})
-        } catch (error) {
-            return res.status(500).json({"error":error.message})
+        return res.status(200).json({"success":true})
+    } catch (error) {
+        return res.status(500).json({"error":error.message})
+    }   
+},
+deleteAllDebateDocuments: async (req,res) => {
+    try {
+        await Debate.deleteMany({});
+        return res.status(200).json({"success":true,"message":"All debate documents deleted successfully"})
+    } catch (error) {
+        return res.status(500).json({"error":error.message})
+    }
+},
+deleteAllClubDocuments: async (req,res) => {
+    try {
+        await Club.deleteMany({});
+        return res.status(200).json({"success":true,"message":"All club documents deleted successfully"})
+    } catch (error) {
+        return res.status(500).json({"error":error.message})
+    }
+},
+vote: async (req,res) => {
+    try{
+        const {leftTeam,rightTeam,side} = req.body;
+        if(!leftTeam || !rightTeam || !side){
+            return res.status(400).json({"error":"Missing required fields"})
         }
+        const field = side === "left" ? "votesLeft" : "votesRight";
+        const leftClub = await Club.findOne({clubName:leftTeam})
+        const rightClub = await Club.findOne({clubName:rightTeam})
+        let debate=await Debate.findOneAndUpdate(
+            {leftTeam:leftClub._id,rightTeam:rightClub._id,isLive:true
+            },
+            {$inc:{[field]:1}},
+            {new:true}
+        )
+        if(!debate){
+            return res.status(400).json({"error":"Debate not found"})
+        }
+            const updatedDebate = {
+            Topic : debate.Topic,
+            leftTeam: leftClub.clubName,
+            rightTeam: rightClub.clubName,
+            votesLeft: debate.votesLeft,
+            votesRight: debate.votesRight,
+            leftScore: debate.leftScore,
+            rightScore: debate.rightScore,
+            leftLogo: leftClub.clubImageUrl,
+            rightLogo: rightClub.clubImageUrl,
+            speakersLeft: leftClub.teamMembers,
+            speakersRight: rightClub.teamMembers,
+            status: debate.status,
+                date: debate.createdAt
+            
+        }
+        return res.status(200).json({"success":true,"updatedDebate":updatedDebate})
+    } catch (error) {
+        return res.status(500).json({"error":error.message})
+    }
+}
     },
     history: async (req, res) => {
         try {
