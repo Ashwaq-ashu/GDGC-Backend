@@ -1,9 +1,22 @@
+import { Verify, verify } from "crypto";
 import Blog from "../models/Blog.js";
 import User from "../models/User.js";
+import { success } from "zod";
 
 // an admin cannot create a new admin 
 
 const AdminController={
+    VerifyAdmin:async(req,res)=>{
+       
+        res.status(200).json({
+            success:true
+        })
+    },
+    VerifySuperAdmin:async(req,res)=>{
+        res.status(200).json({
+            success:true
+        })
+    },
     submitBlog: async(req,res)=>{
         const {title,des,banner,tags,content}= req.body;
         const Admin = req.admin;
