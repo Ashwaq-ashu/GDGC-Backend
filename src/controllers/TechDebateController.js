@@ -192,6 +192,8 @@ getScore : async (req,res) => {
     date:debate.createdAt,
     leftScore:debate.leftScore,
     rightScore:debate.rightScore,
+    votesLeft:debate.votesLeft,
+    votesRight:debate.votesRight
 
  }
  return res.status(200).json({"success":"true",sendingData})
@@ -254,14 +256,17 @@ deleteAllClubDocuments: async (req,res) => {
     }
 },
 vote: async (req,res) => {
+   
     try{
         const {leftTeam,rightTeam,side} = req.body;
         if(!leftTeam || !rightTeam || !side){
             return res.status(400).json({"error":"Missing required fields"})
         }
         const field = side === "left" ? "votesLeft" : "votesRight";
+        const leftClub = await Club.findOne({clubName:leftTeam})
+        const rightClub = await Club.findOne({clubName:rightTeam})
         let debate=await Debate.findOneAndUpdate(
-            {leftTeam,rightTeam,isLive:true
+            {leftTeam:leftClub._id,rightTeam:rightClub._id,isLive:true
             },
             {$inc:{[field]:1}},
             {new:true}
@@ -269,7 +274,23 @@ vote: async (req,res) => {
         if(!debate){
             return res.status(400).json({"error":"Debate not found"})
         }
-        return res.status(200).json({"success":true,"debate":debate})
+            const updatedDebate = {
+            Topic : debate.Topic,
+            leftTeam: leftClub.clubName,
+            rightTeam: rightClub.clubName,
+            votesLeft: debate.votesLeft,
+            votesRight: debate.votesRight,
+            leftScore: debate.leftScore,
+            rightScore: debate.rightScore,
+            leftLogo: leftClub.clubImageUrl,
+            rightLogo: rightClub.clubImageUrl,
+            speakersLeft: leftClub.teamMembers,
+            speakersRight: rightClub.teamMembers,
+            status: debate.status,
+                date: debate.createdAt
+            
+        }
+        return res.status(200).json({"success":true,"updatedDebate":updatedDebate})
     } catch (error) {
         return res.status(500).json({"error":error.message})
     }
