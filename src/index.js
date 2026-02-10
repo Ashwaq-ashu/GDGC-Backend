@@ -24,7 +24,6 @@ import { userRouter } from "./routes/user.js";
 import { authRouter } from "./routes/auth.js";
 import { dashboardRouter } from './routes/dashboard.js';
 import { adminRouter } from "./routes/admin.js";
-
 // app.get('/',(req , res)=>{
 //     res.json({
 //         message : "Hello world"
