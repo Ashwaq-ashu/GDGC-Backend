@@ -4,6 +4,7 @@ import AdminMiddleware from "../middleware/AdminMiddleware.js"
 import SuperAdminMiddleware from "../middleware/SuperAdminMiddleware.js"
 import AdminController from "../controllers/AdminController.js"
 import { VerifyToken } from "../middleware/AuthMiddleware.js"
+import { Verify } from "crypto"
 // import { VerifyToken } from "../middleware/AuthMiddleware.js"
 export const adminRouter = express.Router()
 
@@ -16,6 +17,8 @@ export const adminRouter = express.Router()
 
 // a user who is an superadmin will always be an admin 
 
+adminRouter.route('/verify-admin').get(VerifyToken,AdminMiddleware,AdminController.VerifyAdmin)
+adminRouter.route('/verify-super-admin').get(VerifyToken,SuperAdminMiddleware,AdminController.VerifySuperAdmin)
 
 adminRouter.route('/create-admin').post(VerifyToken,AdminMiddleware,AdminController.createAdmin)
 adminRouter.route('/create-super-admin').post(VerifyToken,SuperAdminMiddleware,AdminController.createSuperAdmin)
