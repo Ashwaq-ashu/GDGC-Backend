@@ -298,7 +298,7 @@ vote: async (req,res) => {
 },
 history: async (req, res) => {
         try {
-            const debates = await Debate.find({isLive:false}).sort({ updatedAt: -1 }); 
+            const debates = await Debate.find({isLive:true}).sort({ updatedAt: -1 }); 
             if (!debates || debates.length === 0) {
                 return res.status(404).json({ 
                     message: "No debates found"
