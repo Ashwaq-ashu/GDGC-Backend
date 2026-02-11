@@ -37,5 +37,9 @@ const debateSchema = new mongoose.Schema({
    },
    votesLeft:{type:Number,default:0},
    votesRight:{type:Number,default:0},
+   break:{
+      type:Boolean,
+      default:false
+   }
 },{timestamps:true});
 export default mongoose.model('Debate', debateSchema);
