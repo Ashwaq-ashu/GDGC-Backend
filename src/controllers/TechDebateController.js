@@ -73,11 +73,18 @@ export const TechDebateController = {
     },
     endDebate: async (req, res) => {
         try {
+            print("hello world")
             const { leftTeam,rightTeam} = req.body;
             const right= await Club.findOne({clubName:rightTeam})
             const left = await Club.findOne({clubName:leftTeam})
             const debate = await Debate.findOne({leftTeam:left._id,rightTeam:right._id})
             let winner;
+            print("hello")
+            if (debate.rightScore == debate.leftScore) {
+                res.staus(408).json({
+                    "message" : "you cannot end the debate unless one has more points" , 
+                })
+            }
             if (debate.rightScore > debate.leftScore) {
                 debate.winner = right._id;
                 winner = right;

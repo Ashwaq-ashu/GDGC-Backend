@@ -12,6 +12,8 @@ export const defaultLimiter = rateLimit({
     }
 });
 
+
+
 // Strict rate limiter for sensitive operations like voting - 10 requests per minute
 export const strictLimiter = rateLimit({    
     windowMs: 1 * 60 * 1000, // 1 minute
