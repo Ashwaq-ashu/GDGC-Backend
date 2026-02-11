@@ -32,7 +32,7 @@ const debateSchema = new mongoose.Schema({
    },
    status:{
       type:String,
-      enum:["League","SemiFinal","Final"],
+      enum:["League","SemiFinal","Final","QuaraterFinal"],
       default:"League"
    },
    votesLeft:{type:Number,default:0},
