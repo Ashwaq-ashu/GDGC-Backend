@@ -167,7 +167,7 @@ getScore : async (req,res) => {
  try {
     debate = await Debate.findOne({isLive:true})
     if(!debate){
-        return res.status(404).json({"error":"No live debate found"})
+        return res.status(200).json({"error":"No live debate found"})
     }
     leftTeamClub = await Club.findOne({_id:debate.leftTeam})
     rightTeamClub = await Club.findOne({_id:debate.rightTeam})
@@ -298,9 +298,9 @@ vote: async (req,res) => {
 },
 history: async (req, res) => {
         try {
-            const debates = await Debate.find({isLive:true}).sort({ updatedAt: -1 }); 
+            const debates = await Debate.find({isLive:false}).sort({ updatedAt: -1 }); 
             if (!debates || debates.length === 0) {
-                return res.status(404).json({ 
+                return res.status(200).json({ 
                     message: "No debates found"
                 });
             }
@@ -330,7 +330,9 @@ history: async (req, res) => {
                     rightScore: debate.rightScore,
                     winner: await Club.findById(debate.winner).select("clubName"),
                     isLive: debate.isLive,
-                    status:debate.status
+                    status:debate.status,
+                    endDate: debate.updatedAt,
+                    startDate: debate.createdAt
                 };
             }));
 
