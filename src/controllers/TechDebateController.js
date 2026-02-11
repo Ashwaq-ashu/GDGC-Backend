@@ -193,7 +193,8 @@ getScore : async (req,res) => {
     leftScore:debate.leftScore,
     rightScore:debate.rightScore,
     votesLeft:debate.votesLeft,
-    votesRight:debate.votesRight
+    votesRight:debate.votesRight,
+    break:debate.break
 
  }
  return res.status(200).json({"success":"true",sendingData})
@@ -294,5 +295,82 @@ vote: async (req,res) => {
     } catch (error) {
         return res.status(500).json({"error":error.message})
     }
+},
+history: async (req, res) => {
+        try {
+            const debates = await Debate.find({isLive:false}).sort({ updatedAt: -1 }); 
+            if (!debates || debates.length === 0) {
+                return res.status(404).json({ 
+                    message: "No debates found"
+                });
+            }
+            const historyData = await Promise.all(debates.map(async (debate) => {
+                const leftTeamInfo = await Club.findById(debate.leftTeam);
+                const rightTeamInfo = await Club.findById(debate.rightTeam);
+                return {
+                    topic: debate.Topic,
+                    date: debate.updatedAt,
+                    leftTeam: {
+                        name: leftTeamInfo.clubName,
+                        members: leftTeamInfo?.teamMembers.map(member => ({
+                            name: member.name,
+                            isLeader: member.isLeader
+                        })),
+                        image: leftTeamInfo.clubImageUrl
+                    },
+                    rightTeam: {
+                        name: rightTeamInfo.clubName,
+                        members: rightTeamInfo.teamMembers.map(member => ({
+                            name: member.name,
+                            isLeader: member.isLeader
+                        })),
+                        image: rightTeamInfo?.clubImageUrl
+                    },
+                    leftScore: debate.leftScore,
+                    rightScore: debate.rightScore,
+                    winner: await Club.findById(debate.winner).select("clubName"),
+                    isLive: debate.isLive,
+                    status:debate.status
+                };
+            }));
+
+            return res.status(200).json({
+                success: true, history: historyData 
+                });
+        } catch (error) {
+            return res.status(500).json({ 
+                message: error.message
+            });
+        }
+},
+pauseDebate : async (req,res) => {
+    try {
+        const { leftTeam, rightTeam } = req.body;
+        const right= await Club.findOne({clubName:rightTeam})
+        const left = await Club.findOne({clubName:leftTeam})
+        const debate = await Debate.findOneAndUpdate(
+            {leftTeam:left._id,rightTeam:right._id},
+            {break:true},
+            {new:true}
+        )
+        return res.status(200).json({"success":true,"debate":debate})
+    } catch (error) {
+        return res.status(500).json({"error":error.message})
+    }
+},
+resumeDebate : async (req,res) => { 
+    try {
+        const { leftTeam, rightTeam } = req.body;
+        const right= await Club.findOne({clubName:rightTeam})
+        const left = await Club.findOne({clubName:leftTeam})
+        const debate = await Debate.findOneAndUpdate(
+            {leftTeam:left._id,rightTeam:right._id},
+            {break:false},
+            {new:true}
+        )
+        return res.status(200).json({"success":true,"debate":debate})
+    } catch (error) {
+        return res.status(500).json({"error":error.message})
+    }   
 }
 }
