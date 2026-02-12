@@ -42,7 +42,7 @@ export const TechDebateController = {
     },
     startDebate: async (req, res) => {
         try {
-            const { leftTeam, rightTeam, Topic } = req.body;
+            const { leftTeam, rightTeam, Topic,status } = req.body;
             if (!leftTeam || !rightTeam || !Topic || leftTeam === rightTeam) {
                 return res.status(400).json({ "error": "Please Type All Fields" });
             }
@@ -60,6 +60,7 @@ export const TechDebateController = {
                     leftTeam:leftteam._id,
                     rightTeam:rightteam._id,
                     Topic,
+                    status,
                     isLive:true,
                 }).save();
                 return res.status(201).json({ "Success": true, debate });
