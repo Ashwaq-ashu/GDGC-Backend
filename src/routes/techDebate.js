@@ -7,9 +7,9 @@ import { formLimiter, strictLimiter, defaultLimiter } from "../middleware/RateLi
 
 // Public routes with rate limiting
 techDebateRouter.route('/form').post(formLimiter, TechDebateController.formSubmit)
-techDebateRouter.route('/get-score').get(defaultLimiter, TechDebateController.getScore)
+techDebateRouter.route('/get-score').get(TechDebateController.getScore)
 techDebateRouter.route('/vote').post(strictLimiter, TechDebateController.vote)
-techDebateRouter.route('/get-history').get(defaultLimiter, TechDebateController.history)
+techDebateRouter.route('/get-history').get(TechDebateController.history)
 
 // Admin protected routes (no rate limiting needed)
 techDebateRouter.route('/start-round').post( TechDebateController.startDebate)
