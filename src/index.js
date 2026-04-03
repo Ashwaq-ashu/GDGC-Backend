@@ -24,6 +24,8 @@ import { userRouter } from "./routes/user.js";
 import { authRouter } from "./routes/auth.js";
 import { dashboardRouter } from './routes/dashboard.js';
 import { adminRouter } from "./routes/admin.js";
+import tweetRoutes from "./routes/tweetRoutes.js";
+
 // app.get('/',(req , res)=>{
 //     res.json({
 //         message : "Hello world"
@@ -37,6 +39,7 @@ app.use("/api/v1/user",userRouter)
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/dashboard",dashboardRouter)
 app.use('/api/v1/techdebate',techDebateRouter)
+app.use("/tweets", tweetRoutes);
 
 // QR router should be LAST since it catches all remaining routes
 app.use("/",qrRouter)
