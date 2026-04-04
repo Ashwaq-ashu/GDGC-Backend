@@ -1,159 +1,63 @@
-import { Tweet } from "../models/Tweet.js";
+import { Tweet } from  "../models/tweet.js";
 
 
-//1. CREATE TWEET
+export async function CreateTweet(req,res) {
+    try{
+        const {text,media} = req.body;
+        if(!text){
+            return res.status(400).json({
+                message:"the Tweet can't be empty, Share Something Interesting!!"
+            });
+        }
+        const tweet = await Tweet.create({
+            text,
+            media,
+            author: req.user.id,
+        });
+        return res.status(200).json({
+            message:"your tweet has successfully created!!",tweet
+        });
+    }
+    catch(error){
+        return res.status(500).json({
+            message: "error from server side",
+            error: error.message,
+        });
+    }    
+};
 
-export const createTweet = async (req, res) => {
-  try {
-    const { text, hashtags } = req.body;
-
-    const tweet = await Tweet.create({
-      author: req.user?._id || null,
-      text,
-      hashtags,
-    });
-
-    res.status(201).json(tweet);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+export async function getRecentTweet(req,res) {
+    try{
+        const tweet = await Tweet.find().toSorted({createdAt:-1}).limit(10);
+        return res.status(200).json({
+            message:"the post's are Fetched successfully",tweet
+        });
+    }
+    catch(err){
+        return res.status(500).json({
+            message: "Error while fetching the post's",
+            error:err.message,
+        });
+    };
+    
 };
 
 
-// 2. GET ALL TWEETS
 
-export const getTweets = async (req, res) => {
-  try {
-    const tweets = await Tweet.find()
-      .populate("author", "name email")
-      .sort({ createdAt: -1 });
-
-    res.json(tweets);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-// 3. GET SINGLE TWEET
-
-export const getTweetById = async (req, res) => {
-  try {
-    const tweet = await Tweet.findById(req.params.id)
-      .populate("author", "name email");
-
-    if (!tweet) return res.status(404).json({ message: "Not found" });
-
-    res.json(tweet);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-// 4. DELETE TWEET (SOFT DELETE
-
-export const deleteTweet = async (req, res) => {
-  try {
-    const tweet = await Tweet.findById(req.params.id);
-
-    if (!tweet) return res.status(404).json({ message: "Not found" });
-
-    tweet.isDeleted = true;
-    tweet.deletedAt = new Date();
-
-    await tweet.save();
-
-    res.json({ message: "Tweet deleted" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-// 5. LIKE / UNLIKE TWEET (IMPORTANT)
-
-export const toggleLike = async (req, res) => {
-  try {
-    const tweet = await Tweet.findById(req.params.id);
-    const userId = req.user?._id;
-
-    if (!tweet) return res.status(404).json({ message: "Not found" });
-
-    const alreadyLiked = tweet.likedBy.includes(userId);
-
-    if (alreadyLiked) {
-      tweet.likedBy.pull(userId);
-      tweet.likeCount -= 1;
-    } else {
-      tweet.likedBy.push(userId);
-      tweet.likeCount += 1;
+export async function getUserTweets(req, res) {
+    try{
+        const{userID}= req.params;
+        const fetchUserPost = await Tweet.find({author: userID,}).sort({createdAt: -1}).limit(5);
+        return res.status(200).json({message:"all the user's recent post are generated successfully!",fetchUserPost});
+            
+        
+    }
+    catch(err){
+        return res.status(500).json({
+            message:"error form server side sorry",
+            error: error.message,
+            
+        });
     }
 
-    await tweet.save();
-
-    res.json(tweet);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-// 6. REPLY TO TWEET
-
-export const replyToTweet = async (req, res) => {
-  try {
-    const { text } = req.body;
-    const parent = await Tweet.findById(req.params.id);
-
-    if (!parent) return res.status(404).json({ message: "Not found" });
-
-    const reply = await Tweet.create({
-      author: req.user?._id || null,
-      text,
-      parentTweet: parent._id,
-      rootTweet: parent.rootTweet || parent._id,
-      isReply: true,
-      replyToUser: parent.author,
-    });
-
-    parent.replyCount += 1;
-    await parent.save();
-
-    res.status(201).json(reply);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-// 7. GET REPLIES OF A TWEET
-
-export const getReplies = async (req, res) => {
-  try {
-    const replies = await Tweet.find({
-      parentTweet: req.params.id,
-    }).sort({ createdAt: 1 });
-
-    res.json(replies);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-// 8. SEARCH BY HASHTAG
-
-export const searchByHashtag = async (req, res) => {
-  try {
-    const { tag } = req.params;
-
-    const tweets = await Tweet.find({
-      hashtags: tag.toLowerCase(),
-    }).sort({ createdAt: -1 });
-
-    res.json(tweets);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };

@@ -1,23 +1,23 @@
 import express from "express";
 import {
-  createTweet,
-  getTweets,
-  toggleLike,
-  replyToTweet
+  CreateTweet,
+  getRecentTweet,
+  getUserTweets,
+ 
 } from "../controllers/tweetController.js";
 
 const router = express.Router();
 
-// Create tweet
-router.post("/", createTweet);
+//tweet create
+router.post("/tweet", CreateTweet);
 
-// Get all tweets
-router.get("/", getTweets);
+//recent tweets.
+router.get("/tweet/recent",getRecentTweet);
 
-// Like tweet
-router.post("/:id/like", toggleLike);
 
-// Reply tweet
-router.post("/:id/reply", replyToTweet);
+//get user's tweet
+router.get("/user/:userId", getUserTweets);
+
+
 
 export default router;
